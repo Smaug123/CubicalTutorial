@@ -10,7 +10,7 @@ open import Basic
 module File1 where
 
 {-
-Let's define the integers.
+Let's define the integers. Answers can be found in commit 4d7aad52e014daeb48fe5fb6854d3b6e0080012a.
 
 If you want to learn how to type something, remember the Emacs action is M-x describe-char with the cursor on a character.
 -}
@@ -41,7 +41,7 @@ incr (neg zero) = pos 1
 incr (neg (succ x)) = neg x
 
 -- First of all, we have in scope an "integer" `congZero` which is of type `pos 0 ≡ neg 0` - huh?!
-incr (congZero i) = pos 1 -- TODO: hole this
+incr (congZero i) = {!!}
 {-
 This one looks different from the non-cubical world.
 
@@ -87,11 +87,11 @@ That is, it tells us how to show `f (succ a) ≡ f 0` for any `f`. (The function
 So if we pick `f` appropriately so that it outputs `False` at 0 but something else (anything else, as long as we can construct it!) at `succ a`, we will be done.
 -}
 succNonzero : {a : ℕ} → succ a ≡ 0 → False
-succNonzero {a} sa=0 = subst f sa=0 record {} -- TODO: hole the record
+succNonzero {a} sa=0 = subst f sa=0 {!!}
   where
     f : ℕ → Set
     f zero = False
-    f (succ i) = True -- TODO: hole True
+    f (succ i) = {!!}
 
 {-
 Let's show that these equality things aren't *too* weird. We'll show that even though `pos 0` is equal to `congZero i1`, it's actually the *only* other `pos` which is equal to `congZero i1`. (You'd hope this would be the case; otherwise we'd have several `pos` being equal to each other.)
@@ -102,9 +102,7 @@ This is the function `cong`.
 If we can somehow create a function that "strips off `pos`", then that function can transform the path `pos a ≡ pos b` into a path `a ≡ b`.
 -}
 toNat : ℤ → ℕ
-toNat (pos x) = x
-toNat (neg x) = 0 -- this one doesn't matter as long as neg 0 goes to the same place as pos 0
-toNat (congZero i) = 0 -- this was forced to be 0 by the definition of `toNat (pos 0)`
+toNat z = {!!}
 
 posInjective : {a b : ℕ} → pos a ≡ pos b → a ≡ b
 posInjective pr = cong toNat pr
@@ -122,10 +120,7 @@ Let's show that `pos` is injective in a different way, inspired by how you might
 This is a classic example of moving a path wholesale along a function; in this case, the function is "decrement".
 -}
 decr : ℤ → ℤ -- TODO hole this
-decr (pos zero) = neg 1
-decr (pos (succ x)) = pos x
-decr (neg x) = neg (succ x)
-decr (congZero i) = neg 1
+decr z = {!!}
 
 posDecr : {a b : ℕ} → pos (succ a) ≡ pos (succ b) → pos a ≡ pos b
 posDecr {a} {b} pr = cong decr pr
@@ -139,30 +134,17 @@ We need to transform `pos zero ≡ pos (succ b)` into `zero ≡ succ b`.
 We could do this using the proof of `posInjective` - moving the path along `toNat` - but it is also interesting to construct the path `zero ≡ succ b` manually using `subst`.
 
 To use `subst`, we need to construct a function from ℤ which is "a type we can populate" at `pos zero` (i.e. at one end of the path), and `zero ≡ succ b` at `pos (succ b)` (i.e. at the other end of the path); then we will be able to move from the populated type to `zero ≡ succ b` using that function.
--}
-posInjective' {zero} {succ b} x = subst t x record {}
-  where
-    t : ℤ → Set
-    t (pos zero) = True
-    t (pos (succ x)) = zero ≡ succ b
-    t (neg x) = True
-    t (congZero i) = True
-posInjective' {succ a} {zero} x = subst t x record {} -- TODO hole all this
-  where
-    t : ℤ → Set
-    t (pos zero) = succ a ≡ zero
-    t (pos (succ x)) = True
-    t (neg x) = succ a ≡ zero
-    t (congZero i) = succ a ≡ zero
 
-{-
-Is it true that `congZero i` is either `pos k` or `neg k` for some k?
-We've shown it for one endpoint, `i1` - but then we actually already knew that, because `congZero` takes `pos 0` to `neg 0`, so its endpoints are already known to be `pos` or `neg`.
-t : (a : ℤ) → Σ[ n ∈ ℕ ] (a ≡ pos n) || Σ[ n ∈ ℕ ] (a ≡ neg n)
-t (pos x) = inl (x , refl)
-t (neg x) = inr (x , refl)
-t (congZero i) = {!!}
+These two are quite hard!
 -}
+posInjective' {zero} {succ b} x = subst t x {!!}
+  where
+    t : ℤ → Set
+    t z = {!!}
+posInjective' {succ a} {zero} x = subst t x {!!}
+  where
+    t : ℤ → Set
+    t z = {!!}
 
 {-
 What does equality mean on the level of types, rather than values?
@@ -188,13 +170,7 @@ This is probably best done if you draw a little picture.
 incrDecrInverse1 (congZero j) i = sym congZero (i ∧ (~ j))
 
 incrDecrInverse2 : (a : ℤ) → decr (incr a) ≡ a
-incrDecrInverse2 (pos x) = refl
-incrDecrInverse2 (neg zero) = congZero
-incrDecrInverse2 (neg (succ x)) = refl
-{-
-Similarly, here we need a path from pos 0 to congZero j; we can do that by following congZero up until the minimum of i and j, so that the path starts out by extending along `congZero` but then stops extending when it hits `j`.
--}
-incrDecrInverse2 (congZero j) i = congZero (i ∧ j)
+incrDecrInverse2 x = {!!}
 
 incrIso : ℤ ≡ ℤ
 incrIso = isoToPath (iso incr decr incrDecrInverse1 incrDecrInverse2)
